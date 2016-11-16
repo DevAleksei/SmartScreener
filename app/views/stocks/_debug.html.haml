@@ -1,0 +1,99 @@
+- unless smart_listing.empty?
+  %div#totalCount Total count: #{smart_listing.count}
+  %table.table.table-striped
+    %thead
+      %th=smart_listing.sortable  "Ticker" , "Ticker"
+      %th=smart_listing.sortable  "Company", "Company"
+      %th="Sector"
+      %th="Industry"
+      %th="Country"
+      %th="Region"
+      %th="MarketCap"
+      %th="PtoE"
+      %th="ForvardPtoE"
+      %th="Price"
+      %th="Change"
+      %th="Volume"
+      %th="AverageVolume"
+      %th="FloatShort"
+      %th="DividendYield"
+      %th="ReturnonAssets"
+      %th="ReturnonEquity"
+      %th="ReturnonInvestment"
+      %th="CurrentRatio"
+      %th="QuickRatio"
+      %th="LTDebtToEquity"
+      %th="TotalDebtToEquity"
+      %th="GrossMargin"
+      %th="OperatingMargin"
+      %th="ProfitMargin"
+      %th="EarningsDate"
+      %th="Exchange"
+      %th="Gap"
+      %th="ChangeFromOpen"
+      %th="ATR"
+      %th="InSP500"
+      %th="InDJIA"
+      %th="InsiderOwnership"
+      %th="InsiderTransactions"
+      %th="InstitutionalOwnership"
+      %th="InstitutionalTransactions"
+      %th="SMA20"
+      %th="SMA50"
+      %th="SMA200"
+      %th="HL20"
+      %th="HL50"
+      %th="HL52w"
+    %tbody
+      - smart_listing.collection.each do |chart|
+        %tr
+          %td=chart.Ticker
+          %td=chart.Company
+          %td=chart.Sector
+          %td=chart.Industry
+          %td=chart.Country
+          %td=chart.Region
+          %td=chart.MarketCap
+          %td=chart.PtoE
+          %td=chart.ForvardPtoE
+          %td=chart.Price
+          %td=chart.Change
+          %td=chart.Volume
+          %td=chart.AverageVolume
+          %td=chart.FloatShort
+          %td=chart.DividendYield
+          %td=chart.ReturnonAssets
+          %td=chart.ReturnonEquity
+          %td=chart.ReturnonInvestment
+          %td=chart.CurrentRatio
+          %td=chart.QuickRatio
+          %td=chart.LTDebtToEquity
+          %td=chart.TotalDebtToEquity
+          %td=chart.GrossMargin
+          %td=chart.OperatingMargin
+          %td=chart.ProfitMargin
+          %td=chart.EarningsDate
+          %td=chart.Exchange
+          %td=chart.Gap
+          %td=chart.ChangeFromOpen
+          %td=chart.ATR
+          %td=chart.InSP500
+          %td=chart.InDJIA
+          %td=chart.InsiderOwnership
+          %td=chart.InsiderTransactions
+          %td=chart.InstitutionalOwnership
+          %td=chart.InstitutionalTransactions
+          %td=chart.SMA20
+          %td=chart.SMA50
+          %td=chart.SMA200
+          %td=chart.HL20
+          %td=chart.HL50
+          %td=chart.Low52w
+        %tr.debugStockBlock
+          %td{:colspan=>42,:class => "chart",:id => "#{chart.Ticker}"}
+  :javascript
+    drawCharts();
+  = smart_listing.paginate
+  = smart_listing.pagination_per_page_links
+- else
+  %p.warning No stocks!

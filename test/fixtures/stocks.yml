@@ -1,0 +1,51 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  Region: MyString
+  Ticker: MyString
+  Company: MyString
+  Sector: MyString
+  Industry: MyString
+  Country: MyString
+  MarketCap: 1
+  PtoE: 1.5
+  Price: 1.5
+  Change: 1.5
+  Volume: MyString
+  DividendYield: 1.5
+  ReturnonAssets: 1.5
+  ReturnonEquity: 1.5
+  ReturnonInvestment: 1.5
+  CurrentRatio: 1.5
+  QuickRatio: 1.5
+  LTDebtToEquity: 1.5
+  TotalDebt/Equity: 1.5
+  GrossMargin: 1.5
+  OperatingMargin: 1.5
+  ProfitMargin: 1.5
+  EarningsDate: MyString
+
+two:
+  Region: MyString
+  Ticker: MyString
+  Company: MyString
+  Sector: MyString
+  Industry: MyString
+  Country: MyString
+  MarketCap: 1
+  PtoE: 1.5
+  Price: 1.5
+  Change: 1.5
+  Volume: MyString
+  DividendYield: 1.5
+  ReturnonAssets: 1.5
+  ReturnonEquity: 1.5
+  ReturnonInvestment: 1.5
+  CurrentRatio: 1.5
+  QuickRatio: 1.5
+  LTDebtToEquity: 1.5
+  TotalDebt/Equity: 1.5
+  GrossMargin: 1.5
+  OperatingMargin: 1.5
+  ProfitMargin: 1.5
+  EarningsDate: MyString

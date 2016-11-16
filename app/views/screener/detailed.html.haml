@@ -1,0 +1,51 @@
+%div#content
+  <h1>Detailed</h1>
+  %div#timeFrame
+    .label.label-info Time frame:
+    %a.btn.btn-default.btn-xs{:onclick => "timeFrameSet(this,'300');drawWideCharts();",:class => @timeFrame == "300" ? 'active' : ''} 5 Min
+    %a.btn.btn-default.btn-xs{:onclick => "timeFrameSet(this,'daily');drawWideCharts();",:class => @timeFrame == "daily" ? 'active' : ''} 1 Day
+    %a.btn.btn-default.btn-xs{:onclick => "timeFrameSet(this,'weekly');drawWideCharts();",:class => @timeFrame == "weekly" ? 'active' : ''} 1 Week
+    %a.btn.btn-default.btn-xs{:onclick => "timeFrameSet(this,'monthly');drawWideCharts();",:class => @timeFrame == "monthly" ? 'active' : ''} 1 Month
+  :javascript
+    var timeframe="#{@timeFrame}";
+    function drawWideCharts(){
+      var requestUri="/api/getHistory?ticker="; 
+      switch (timeframe) {
+        case "300":
+          requestUri="/api/get5MinHistory?ticker="
+          break
+        case "daily":
+          requestUri="/api/getDailyHistory?ticker="
+          break
+        case "weekly":
+          requestUri="/api/getWeeklyHistory?ticker="
+          break
+        case "monthly":
+          requestUri="/api/getMonthlyHistory?ticker="
+          break
+      }      
+      var blocks = document.getElementsByClassName("stockBlock");
+      for(var i=0; i<blocks.length ; i++){
+        var block = blocks[i];
+        var chart = block.getElementsByClassName("chart")[0];
+        var reset = block.getElementsByClassName("resetButton")[0];
+        var full = block.getElementsByClassName("fullButton")[0];
+        var chartTicker = chart.id;
+        var perf = function(ticker,renderElement,resetButton,fullButton){
+          return function(data){   
+            drawChart(data,ticker,renderElement,resetButton,fullButton,1400);
+          }
+        }
+        $.ajax({
+          url:requestUri+chartTicker+"&time="+(new Date().getTime()),
+          dataType: "text"         
+        }).done(perf(chartTicker,chart,reset,full));
+      }
+    }
+    
+    function timeFrameSet(button,timeframeVal){
+      timeframe=timeframeVal;
+      $('#timeFrame a').removeClass('active');
+      $(button).addClass('active');
+    }
+  =smart_listing_render(:stocks)

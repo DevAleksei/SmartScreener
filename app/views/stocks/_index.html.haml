@@ -1,0 +1,30 @@
+- unless smart_listing.empty?
+  %div.totalCount
+    %h4
+      %span.label.label-pill.label-primary Total count: #{smart_listing.count}
+  %div#stocksBlock
+    - smart_listing.collection.each do |chart|
+      %div.stockBlock
+        %div.attributeBlock
+          %a.detailedButton.btn.btn-default.btn-xs(href="/detailed?filterTicker=#{chart.Ticker}") Details
+          %button.resetButton.btn.btn-warning.btn-xs Reset
+          %button.fullButton.btn.btn-info.btn-xs Full   
+          %div.favStockBlock{:ticker=>"#{chart.Ticker}"}
+            %span.glyphicon.glyphicon-euro{:onclick=>"favIconClick(this,'euro')"}
+            %span.glyphicon.glyphicon-usd{:onclick=>"favIconClick(this,'usd')"}
+            %span.glyphicon.glyphicon-gbp{:onclick=>"favIconClick(this,'gbp')"}
+          %span.label.label-default #{chart.Company}
+          %span.label.label-default #{chart.Sector}, #{chart.Industry}
+          %span.label.label-default AVR: unknown
+          %span.label.label-default Average volume: #{chart.AverageVolume}
+          %span.label.label-default Today volume: #{chart.Volume}
+        %div{:class => "chart",:id => "#{chart.Ticker}"}
+  :javascript
+    drawCharts();
+    highlightFav();
+  %div.paginatorSpace
+    %div.paginator
+      = smart_listing.paginate
+      = smart_listing.pagination_per_page_links
+- else
+  %p.warning No stocks!

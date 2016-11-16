@@ -1,0 +1,118 @@
+- unless smart_listing.empty?
+  %table.table.table-striped
+    %tbody
+      - smart_listing.collection.each do |chart|
+        %tr.detailedStocksBlock
+          %td{:colspan=>10, :align=>"center"}
+            %div.stockBlock
+              %div.detailedAttributeBlock
+                %span.label.label-default #{chart.Company}
+                %span.label.label-default #{chart.Sector}, #{chart.Industry}
+                %button.resetButton.btn.btn-warning.btn-xs Reset
+                %button.fullButton.btn.btn-info.btn-xs Full
+                %span.label.label-default AVR: unknown
+                %span.label.label-default Average volume: #{chart.AverageVolume}
+                %span.label.label-default Today volume: #{chart.Volume}
+              %div{:class => "chart",:id => "#{chart.Ticker}"}
+        %tr
+          %th=smart_listing.sortable  "Ticker" , "Ticker"
+          %th=smart_listing.sortable  "Company", "Company"
+          %th="Sector"
+          %th="Industry"
+          %th="Country"
+          %th="Region"
+          %th="MarketCap"
+          %th="PtoE"
+          %th="ForvardPtoE"
+          %th="Price"
+        %tr
+          %td=chart.Ticker
+          %td=chart.Company
+          %td=chart.Sector
+          %td=chart.Industry
+          %td=chart.Country
+          %td=chart.Region
+          %td=chart.MarketCap
+          %td=chart.PtoE
+          %td=chart.ForvardPtoE
+          %td=chart.Price
+        %tr
+          %th="Change"
+          %th="Volume"
+          %th="AverageVolume"
+          %th="FloatShort"
+          %th="DividendYield"
+          %th="ReturnonAssets"
+          %th="ReturnonEquity"
+          %th="ReturnonInvestment"
+          %th="CurrentRatio"
+          %th="QuickRatio"
+        %tr
+          %td=chart.Change
+          %td=chart.Volume
+          %td=chart.AverageVolume
+          %td=chart.FloatShort
+          %td=chart.DividendYield
+          %td=chart.ReturnonAssets
+          %td=chart.ReturnonEquity
+          %td=chart.ReturnonInvestment
+          %td=chart.CurrentRatio
+          %td=chart.QuickRatio
+        %tr
+          %th="TotalDebtToEquity"
+          %th="GrossMargin"
+          %th="OperatingMargin"
+          %th="ProfitMargin"
+          %th="EarningsDate"
+          %th="Exchange"
+          %th="Gap"
+          %th="ChangeFromOpen"
+          %th="ATR"
+          %th="InSP500"
+        %tr
+          %td=chart.TotalDebtToEquity
+          %td=chart.GrossMargin
+          %td=chart.OperatingMargin
+          %td=chart.ProfitMargin
+          %td=chart.EarningsDate
+          %td=chart.Exchange
+          %td=chart.Gap
+          %td=chart.ChangeFromOpen
+          %td=chart.ATR
+          %td=chart.InSP500
+        %tr
+          %th="InDJIA"
+          %th="InsiderOwnership"
+          %th="InsiderTransactions"
+          %th="InstitutionalOwnership"
+          %th="InstitutionalTransactions"
+          %th="SMA20"
+          %th="SMA50"
+          %th="SMA200"
+          %th="High20"
+          %th="Low20"
+        %tr
+          %td=chart.InDJIA
+          %td=chart.InsiderOwnership
+          %td=chart.InsiderTransactions
+          %td=chart.InstitutionalOwnership
+          %td=chart.InstitutionalTransactions
+          %td=chart.SMA20
+          %td=chart.SMA50
+          %td=chart.SMA200
+          %td=chart.High20
+          %td=chart.Low20
+        %tr
+          %th="LTDebtToEquity"   
+          %th="High52w"       
+          %th="Low52w"       
+        %tr
+          %td=chart.LTDebtToEquity
+          %td=chart.High52w
+          %td=chart.Low52w
+  :javascript
+    drawWideCharts();
+  = smart_listing.paginate
+  = smart_listing.pagination_per_page_links
+- else
+  %p.warning No stocks!

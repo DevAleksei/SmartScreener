@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>SmartScreener</title>
+  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
+  <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
+  <%= csrf_meta_tags %>
+</head>
+<body>
+<div id="headerTopSpace">
+  <div id="header">
+    <div id="headerContent">
+      <div class="fixed-menu">
+        <ul>
+          <li>
+            <a href="/" data-no-turbolink>Screener</a>
+          </li>
+          <li>
+            <a href="/faq">FAQ</a>
+          </li>
+        </ul>
+<%#        <div id="regionSelect">
+          <span>Region:</span>
+          <select>
+            <option>USA</option>
+          </select>
+%>        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="topAdbox">Top advertising block</div>
+<%= yield %>
+
+</body>
+</html>

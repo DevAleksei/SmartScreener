@@ -1,0 +1,13 @@
+<%= smart_listing_update(:stocks) %>
+location.hash = "";
+<% if @anchor %>
+  location.hash = "timeFrame";
+<% end %>
+<% if @industries %>
+  if(updateIndustries){
+    filterIndustry=document.getElementById("filterIndustry")
+    defaultValue=filterIndustry.options[0].outerHTML
+    $(filterIndustry).html(defaultValue+`<%=options_for_select(@industries)%>`);
+    updateIndustries=false;
+  }
+<% end %>

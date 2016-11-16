@@ -1,0 +1,318 @@
+%div#content{"ng-app" => "Screener"}
+  %h1 Screener
+  :javascript
+    var timeframe="#{@timeFrame}";
+    function drawCharts(){
+      var requestUri="/api/getHistory?ticker="; 
+      switch (timeframe) {
+        case "300":
+          requestUri="/api/get5MinHistory?ticker="
+          break
+        case "daily":
+          requestUri="/api/getDailyHistory?ticker="
+          break
+        case "weekly":
+          requestUri="/api/getWeeklyHistory?ticker="
+          break
+        case "monthly":
+          requestUri="/api/getMonthlyHistory?ticker="
+          break
+      } 
+      var blocks = document.getElementsByClassName("stockBlock");
+      for(var i=0; i<blocks.length ; i++){
+        var block = blocks[i];
+        var chart = block.getElementsByClassName("chart")[0];
+        var reset = block.getElementsByClassName("resetButton")[0];
+        var full = block.getElementsByClassName("fullButton")[0];
+        var chartTicker = chart.id;
+        var perf = function(ticker,renderElement,resetButton,fullButton){
+          return function(data){
+            drawChart(data,ticker,renderElement,resetButton,fullButton);
+          }
+        }
+        $.ajax({
+          url:requestUri+chartTicker+"&time="+(new Date().getTime()),
+          dataType: "text"         
+        }).done(perf(chartTicker,chart,reset,full));
+      }
+    }
+    
+    function timeFrameSet(button,timeframeVal){
+      timeframe=timeframeVal;
+      $('#timeFrame a').removeClass('active');
+      $(button).addClass('active');
+    }
+  %div{"ng-controller" => "Filters","class" => "filterPanel"}
+    =smart_listing_controls_for(:stocks, {class: "form-inline text-left", id: "filtersForm"}) do
+      %ul.nav.nav-tabs{"ng-init" => "tab = 1"}
+        %li{"ng-class" => "{active:tab === 1}"}
+          %a{"ng-click"=> "tab = 1"} Main
+        %li.hidden{"ng-class" => "{active:tab === 2}"}
+          %a{"ng-click"=> "tab = 2"} Fundamental
+        %li{"ng-class" => "{active:tab === 3}"}
+          %a{"ng-click"=> "tab = 3"} Technical
+        %li.hidden{"ng-class" => "{active:tab === 4}"}
+          %a{"ng-click"=> "tab = 4"} Other
+      %div{"ng-show" => "tab === 1", "class" => "filterTab"}
+        .form-group#filterTicker.input-append
+          = text_field_tag :filterTicker, '', class: "filterTickers search form-control", 
+                                    placeholder: "Tickers"
+        %div.filterSelectors
+          .form-group.filterParameter.input-append
+            = select_tag :filterSector, options_for_select(@sectors), class: "search form-control", 
+                                      prompt: "Sector", autocomplete: :off, onchange: "updateIndustries=true;$('#filterIndustry').selectedIndex=0;setTimeout(function(){$('#filterIndustry').trigger('change')},250)".html_safe
+          .form-group.filterParameter.input-append
+            = select_tag :filterIndustry, options_for_select(@industries), class: "search form-control", 
+                                      prompt: "Industry", autocomplete: :off
+          .form-group.filterParameter.input-append
+            = select_tag :filterCountry, options_for_select(@countries), class: "search form-control", 
+                                      prompt: "Country", autocomplete: :off
+          .form-group.filterParameter.input-append
+            = select_tag :filterExchanges, options_for_select(@exchanges), class: "search form-control", 
+                                      prompt: "Exchange", autocomplete: :off
+        %div.insFavStockBlock
+          %table
+            %tr
+              %td
+                %span.glyphicon.glyphicon-euro{:onclick=>"insFavIconClick('euro')"}
+              %td
+                %span.glyphicon.glyphicon-usd{:onclick=>"insFavIconClick('usd')"}
+            %tr
+              %td
+                %span.glyphicon.glyphicon-gbp{:onclick=>"insFavIconClick('gbp')"}
+        %div.filterParameter.form-group
+          %span.form-group.filterParameterName Market Cap
+          .form-group.input-append
+            = select_tag :filterMarketCapMin, options_for_select(@priceRange), class: "search form-control", 
+                                    prompt: "Min", autocomplete: :off, step: 'any'	
+          .form-group.input-append
+            = select_tag :filterMarketCapMax, options_for_select(@priceRange), class: "search form-control", 
+                                    prompt: "Max", autocomplete: :off
+        %div.filterParameter.form-group
+          %span.form-group.filterParameterName Price
+          .form-group.input-append
+            = number_field_tag :filterPriceMin, nil, class: "search form-control", 
+                                    placeholder: "Min price", autocomplete: :off, step: 'any'	
+          .form-group.input-append
+            = number_field_tag :filterPriceMax, nil, class: "search form-control", 
+                                    placeholder: "Max price", autocomplete: :off, step: 'any'
+        %div.filterParameter.form-group
+          %span.form-group.filterParameterName Average Volume
+          .form-group.input-append
+            = select_tag :filterAverageVolumeMin, options_for_select(@volumeRange), class: "search form-control", 
+                                    prompt: "Min", autocomplete: :off
+          .form-group.input-append
+            = select_tag :filterAverageVolumeMax, options_for_select(@volumeRange), class: "search form-control", 
+                                    prompt: "Max", autocomplete: :off
+        %div.filterParameter.form-group
+          %span.form-group.filterParameterName Volume
+          .form-group.input-append
+            = select_tag :filterVolumeMin, options_for_select(@volumeRange), class: "search form-control", 
+                                    prompt: "Min volume", autocomplete: :off	
+          .form-group.input-append
+            = select_tag :filterVolumeMax, options_for_select(@volumeRange), class: "search form-control", 
+                                    prompt: "Max volume", autocomplete: :off
+        %div.filterParameter.form-group
+          %span.form-group.filterParameterName P/E
+          .form-group.input-append
+            = number_field_tag :filterPtoEMin, nil, class: "search form-control", 
+                                    placeholder: "Min", autocomplete: :off, step: 'any'	
+          .form-group.input-append
+            = number_field_tag :filterPtoEMax, nil, class: "search form-control", 
+                                    placeholder: "Max", autocomplete: :off, step: 'any'	
+        %div.filterParameter.form-group
+          %span.form-group.filterParameterName Dividend yeld
+          .form-group.input-append
+            = number_field_tag :filterDividendYieldMin, nil, class: "search form-control", 
+                                    placeholder: "Min", autocomplete: :off, step: 'any'	
+          .form-group.input-append
+            = number_field_tag :filterDividendYieldMax, nil, class: "search form-control", 
+                                    placeholder: "Max", autocomplete: :off, step: 'any'  
+        %div.filterParameter.form-group
+          %span.form-group.filterParameterName Select indices
+          .form-group.filterParameter.input-append
+            = select_tag :filterIndices, options_for_select(@indices), class: "search form-control", 
+                                      include_blank: "no filter", autocomplete: :off, multiple: true
+      %div.ng-cloak{"ng-show" => "tab === 2", "class" => "filterTab"}
+        %div.filterParameter.form-group
+          %span.form-group.filterParameterName Forvard P/E
+          .form-group.input-append
+            = number_field_tag :filterForvardPtoEMin, nil, class: "search form-control", 
+                                    placeholder: "Min", autocomplete: :off, step: 'any'	
+          .form-group.input-append
+            = number_field_tag :filterForvardPtoEMax, nil, class: "search form-control", 
+                                    placeholder: "Max", autocomplete: :off, step: 'any'	                                    
+        %div.filterParameter.form-group 
+          %span.form-group.filterParameterName Insider Ownership
+          .form-group.input-append
+            = number_field_tag :filterInsiderOwnershipMin, nil, class: "search form-control", 
+                                    placeholder: "Min", autocomplete: :off, step: 'any'	
+          .form-group.input-append
+            = number_field_tag :filterInsiderOwnershipMax, nil, class: "search form-control", 
+                                    placeholder: "Max", autocomplete: :off, step: 'any'  
+        %div.filterParameter.form-group 
+          %span.form-group.filterParameterName Insider Transactions
+          .form-group.input-append
+            = number_field_tag :filterInsiderTransactionsMin, nil, class: "search form-control", 
+                                    placeholder: "Min", autocomplete: :off, step: 'any'	
+          .form-group.input-append
+            = number_field_tag :filterInsiderTransactionsMax, nil, class: "search form-control", 
+                                    placeholder: "Max", autocomplete: :off, step: 'any'  
+        %div.filterParameter.form-group 
+          %span.form-group.filterParameterName Institutional Ownership
+          .form-group.input-append
+            = number_field_tag :filterInstitutionalOwnershipMin, nil, class: "search form-control", 
+                                    placeholder: "Min", autocomplete: :off, step: 'any'	
+          .form-group.input-append
+            = number_field_tag :filterInstitutionalOwnershipMax, nil, class: "search form-control", 
+                                    placeholder: "Max", autocomplete: :off, step: 'any'  
+        %div.filterParameter.form-group 
+          %span.form-group.filterParameterName Institutional Transactions
+          .form-group.input-append
+            = number_field_tag :filterInstitutionalTransactionsMin, nil, class: "search form-control", 
+                                    placeholder: "Min", autocomplete: :off, step: 'any'	
+          .form-group.input-append
+            = number_field_tag :filterInstitutionalTransactionsMax, nil, class: "search form-control", 
+                                    placeholder: "Max", autocomplete: :off, step: 'any'  
+        %div.filterParameter.form-group 
+          %span.form-group.filterParameterName Current Ratio
+          .form-group.input-append
+            = number_field_tag :filterCurrentRatioMin, nil, class: "search form-control", 
+                                    placeholder: "Min", autocomplete: :off, step: 'any'	
+          .form-group.input-append
+            = number_field_tag :filterCurrentRatioMax, nil, class: "search form-control", 
+                                    placeholder: "Max", autocomplete: :off, step: 'any'  
+        %div.filterParameter.form-group 
+          %span.form-group.filterParameterName Quick Ratio
+          .form-group.input-append
+            = number_field_tag :filterQuickRatioMin, nil, class: "search form-control", 
+                                    placeholder: "Min", autocomplete: :off, step: 'any'	
+          .form-group.input-append
+            = number_field_tag :filterQuickRatioMax, nil, class: "search form-control", 
+                                    placeholder: "Max", autocomplete: :off, step: 'any'                                                                 
+      %div.ng-cloak{"ng-show" => "tab === 3", "class" => "filterTab"}     
+        %div.filterParameter.form-group
+          %span.form-group.filterParameterName GAP
+          .form-group.input-append
+            = select_tag :filterGap, options_for_select(@percentageRange), class: "search form-control", 
+                                    prompt: "Any", autocomplete: :off    
+        %div.filterParameter.form-group
+          %span.form-group.filterParameterName Change
+          .form-group.input-append
+            = select_tag :filterChange, options_for_select(@percentageRange), class: "search form-control", 
+                                    prompt: "Any", autocomplete: :off  
+        %div.filterParameter.form-group
+          %span.form-group.filterParameterName Change from Open
+          .form-group.input-append
+            = select_tag :filterChangeFromOpen, options_for_select(@percentageRange), class: "search form-control", 
+                                    prompt: "Any", autocomplete: :off	
+        %div.filterParameter.form-group
+          %span.form-group.filterParameterName Change from SMA20
+          .form-group.input-append
+            = select_tag :filterChangeFromSMA20, options_for_select(@percentageRange), class: "search form-control", 
+                                    prompt: "Any", autocomplete: :off	
+        %div.filterParameter.form-group
+          %span.form-group.filterParameterName Change from SMA50
+          .form-group.input-append
+            = select_tag :filterChangeFromSMA50, options_for_select(@percentageRange), class: "search form-control", 
+                                    prompt: "Any", autocomplete: :off	
+        %div.filterParameter.form-group
+          %span.form-group.filterParameterName Change from SMA200
+          .form-group.input-append
+            = select_tag :filterChangeFromSMA200, options_for_select(@percentageRange), class: "search form-control", 
+                                    prompt: "Any", autocomplete: :off	
+        %div.filterParameter.form-group
+          %span.form-group.filterParameterName Change from HL20
+          .form-group.input-append
+            = select_tag :filterChangeFromHL20, options_for_select(@percentageRange), class: "search form-control", 
+                                    prompt: "Any", autocomplete: :off	
+        %div.filterParameter.form-group
+          %span.form-group.filterParameterName Change from HL50
+          .form-group.input-append
+            = select_tag :filterChangeFromHL50, options_for_select(@percentageRange), class: "search form-control", 
+                                    prompt: "Any", autocomplete: :off	
+        %div.filterParameter.form-group
+          %span.form-group.filterParameterName Change from HL52w
+          .form-group.input-append
+            = select_tag :filterChangeFromHL52w, options_for_select(@percentageRange), class: "search form-control", 
+                                    prompt: "Any", autocomplete: :off	
+        %div.filterParameter.form-group
+          %span.form-group.filterParameterName ATR
+          .form-group.input-append
+            = select_tag :filterATR, options_for_select(@atrRange), class: "search form-control", 
+                                    prompt: "Any", autocomplete: :off	
+      %div.ng-cloak{"ng-show" => "tab === 4", "class" => "filterTab"}  
+        %div.filterParameter.form-group 
+          %span.form-group.filterParameterName Return on Assets
+          .form-group.input-append
+            = number_field_tag :filterReturnonAssetsMin, nil, class: "search form-control", 
+                                    placeholder: "Min", autocomplete: :off, step: 'any'	
+          .form-group.input-append
+            = number_field_tag :filterReturnonAssetsMax, nil, class: "search form-control", 
+                                    placeholder: "Max", autocomplete: :off, step: 'any'  
+        %div.filterParameter.form-group  
+          %span.form-group.filterParameterName Return on Equity
+          .form-group.input-append
+            = number_field_tag :filterReturnonEquityMin, nil, class: "search form-control", 
+                                    placeholder: "Min", autocomplete: :off, step: 'any'	
+          .form-group.input-append
+            = number_field_tag :filterReturnonEquityMax, nil, class: "search form-control", 
+                                    placeholder: "Max", autocomplete: :off, step: 'any'   
+        %div.filterParameter.form-group  
+          %span.form-group.filterParameterName Return on Investment
+          .form-group.input-append
+            = number_field_tag :filterReturnonInvestmentMin, nil, class: "search form-control", 
+                                    placeholder: "Min", autocomplete: :off, step: 'any'	
+          .form-group.input-append
+            = number_field_tag :filterReturnonInvestmentMax, nil, class: "search form-control", 
+                                    placeholder: "Max", autocomplete: :off, step: 'any'                              
+        %div.filterParameter.form-group
+          %span.form-group.filterParameterName LT Debt to Equity
+          .form-group.input-append
+            = number_field_tag :filterLTDebttoEquityMin, nil, class: "search form-control", 
+                                    placeholder: "Min", autocomplete: :off, step: 'any'	
+          .form-group.input-append
+            = number_field_tag :filterLTDebttoEquityMax, nil, class: "search form-control", 
+                                    placeholder: "Max", autocomplete: :off, step: 'any'                              
+        %div.filterParameter.form-group
+          %span.form-group.filterParameterName Total Debt to Equity
+          .form-group.input-append
+            = number_field_tag :filterTotalDebttoEquityMin, nil, class: "search form-control", 
+                                    placeholder: "Min", autocomplete: :off, step: 'any'	
+          .form-group.input-append
+            = number_field_tag :filterTotalDebttoEquityMax, nil, class: "search form-control", 
+                                    placeholder: "Max", autocomplete: :off, step: 'any'                              
+        %div.filterParameter.form-group
+          %span.form-group.filterParameterName Gross Margin
+          .form-group.input-append
+            = number_field_tag :filterGrossMarginMin, nil, class: "search form-control", 
+                                    placeholder: "Min", autocomplete: :off, step: 'any'	
+          .form-group.input-append
+            = number_field_tag :filterGrossMarginMax, nil, class: "search form-control", 
+                                    placeholder: "Max", autocomplete: :off, step: 'any'                              
+        %div.filterParameter.form-group
+          %span.form-group.filterParameterName Operating Margin
+          .form-group.input-append
+            = number_field_tag :filterOperatingMarginMin, nil, class: "search form-control", 
+                                    placeholder: "Min", autocomplete: :off, step: 'any'	
+          .form-group.input-append
+            = number_field_tag :filterOperatingMarginMax, nil, class: "search form-control", 
+                                    placeholder: "Max", autocomplete: :off, step: 'any'
+        %div.filterParameter.form-group
+          %span.form-group.filterParameterName Profit Margin
+          .form-group.input-append
+            = number_field_tag :filterProfitMarginMin, nil, class: "search form-control", 
+                                    placeholder: "Min", autocomplete: :off, step: 'any'	
+          .form-group.input-append
+            = number_field_tag :filterProfitMarginMax, nil, class: "search form-control", 
+                                    placeholder: "Max", autocomplete: :off, step: 'any' 
+    .searchButton
+      %button.btn.btn-primary{type: :submit}
+        %span.glyphicon.glyphicon-search
+    %div#timeFrame
+      .label.label-info Time frame:
+      %a.btn.btn-default.btn-xs{:onclick => "timeFrameSet(this,'300');drawCharts();",:class => @timeFrame == "300" ? 'active' : ''} 5 Min
+      %a.btn.btn-default.btn-xs{:onclick => "timeFrameSet(this,'daily');drawCharts();",:class => @timeFrame == "daily" ? 'active' : ''} 1 Day
+      %a.btn.btn-default.btn-xs{:onclick => "timeFrameSet(this,'weekly');drawCharts();",:class => @timeFrame == "weekly" ? 'active' : ''} 1 Week
+      %a.btn.btn-default.btn-xs{:onclick => "timeFrameSet(this,'monthly');drawCharts();",:class => @timeFrame == "monthly" ? 'active' : ''} 1 Month
+  =smart_listing_render(:stocks)

@@ -1,0 +1,184 @@
+// Place all the styles related to the screener controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+   
+    .totalCount {
+      text-align: center;
+    }
+    
+    .searchButton {
+      float: right;
+    }
+    
+    .stockBlock {
+      min-width: 700px;
+      min-height: 425px;
+      display:inline-block;
+    }
+
+    #stocksBlock {
+      max-width: 1420px;
+      margin: 0 auto;
+      overflow: hidden;
+      position: relative;
+      text-align:center;
+    }
+    
+    .attributeBlock {
+      max-width: 700px;
+    }
+
+    .stockBlock svg{
+      font: 10px sans-serif;
+    }
+    
+    .extradata {
+      font:bold 110% sans-serif;
+    }
+    
+    .symbol {
+      font-size:large;
+    }
+    
+    .filterPanel {
+      width: 80em;
+      min-height: 25em;
+      margin: 0 auto;
+    }
+    
+    .filterParameterName {
+      width: 10em;
+    }
+    
+    .filterParameter {
+      padding-right: 1em;
+      padding-bottom: 0.5em;
+    }
+    
+    .filterTab {
+      padding: 0.2em;
+    }
+    
+    .filterSelectors {
+      float: right;
+    }
+    
+    .filterTickers {
+      width:25em;
+    }
+
+    .axis path,
+    .axis line {
+      fill: none;
+      stroke: #000;
+      shape-rendering: crispEdges;
+    }
+    
+    .tick line {
+      fill: none;
+      stroke: gainsboro;
+      shape-rendering: crispEdges;
+      stroke-dasharray: 0.1em;
+    }
+    
+    .resetButton, .fullButton, .detailedButton{
+      float: right;
+      margin-left: 1em;
+    }
+    
+    .glyphicon.active{
+      color: #ec971f;
+    }
+    
+    .insFavStockBlock{
+      float: left;
+    }
+    
+    .favStockBlock{
+      float: right;
+      margin-left: 1em;
+      font-size: 0.75em;
+    }
+
+    .paginatorSpace{
+      height:7em;
+    }
+
+    .paginator {
+      position: fixed;
+      height:7em;
+      width: 100%;
+      bottom: 0px;
+      background-color:#f5f5f5
+    }
+    
+    .volume path.equal {
+      fill: #EEEEEE;
+    }
+    
+    .volume .tick:first-of-type{
+      visibility: hidden
+    }
+
+    .volume path.up {
+      fill: #6ed3cf;
+    }
+
+    .volume path.down {
+      fill: #e62739;
+    }
+
+    path.candle.body {
+      stroke-width: 0;
+    }
+
+    path.candle.up {
+      fill: #00AA00;
+      stroke: #00AA00;
+    }
+
+    path.candle.down {
+      fill: #FF0000;
+      stroke: #FF0000;
+    }
+    
+    path.candle.equal {
+      fill: #C0C0C0;
+      stroke: #C0C0C0;
+    }
+    
+    path.line {
+      fill: none;
+      stroke: #BF5FFF;
+      stroke-width: 1;
+    }
+
+    rect.pane {
+      cursor: move;
+      fill: none;
+    }
+    
+    .crosshair {
+      cursor: crosshair;
+    }
+
+    .crosshair path.wire {
+      stroke: black;
+      stroke-dasharray: 1, 1;
+    }
+    
+    .crosshair .axisannotation path {
+      fill: #DDDDDD;
+    }
+
+    .ma-0 path.line {
+      stroke: #1f77b4;
+    }
+
+    .ma-1 path.line {
+      stroke: #aec7e8;
+    }
+
+    .ma-2 path.line {
+      stroke: #ff7f0e;
+    }
